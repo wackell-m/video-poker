@@ -71,7 +71,7 @@ function evaluateRound() {
     messageEl.textContent = "Game Over! Refresh to play again.";
     drawButton.disabled = true;
   } else if (checkmarks === 3) {
-    messageEl.textContent = "Congratulations, friend. I know the code you seek. It's 83";
+    messageEl.textContent = "You win the game! Refresh to play again.";
     drawButton.disabled = true;
   }
 }
