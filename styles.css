@@ -1,0 +1,64 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: url('casino-background.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#game-container {
+  text-align: center;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 600px;
+}
+
+#status-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+#cards-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.card {
+  width: 100px;
+  height: 150px;
+  background: gray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.card.selected {
+  border: 3px solid yellow;
+}
+
+#draw-button {
+  padding: 10px 20px;
+  font-size: 18px;
+  background-color: green;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#message {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+}
