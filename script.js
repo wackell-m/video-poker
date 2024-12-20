@@ -15,6 +15,7 @@ let dealerCards = [];
 const livesEl = document.getElementById("lives");
 const checkmarksEl = document.getElementById("checkmarks");
 const cardsContainer = document.getElementById("cards-container");
+const dealerCardsContainer = document.getElementById("dealer-cards-container");
 const messageEl = document.getElementById("message");
 const drawButton = document.getElementById("draw-button");
 
@@ -31,12 +32,21 @@ function getRandomCard() {
 
 function renderCards() {
   cardsContainer.innerHTML = "";
+  dealerCardsContainer.innerHTML = "";
+
   userCards.forEach((card, index) => {
     const cardEl = document.createElement("div");
     cardEl.className = "card";
     cardEl.style.backgroundImage = `url(${card})`;
     cardEl.addEventListener("click", () => toggleCard(index));
     cardsContainer.appendChild(cardEl);
+  });
+
+  dealerCards.forEach((card) => {
+    const cardEl = document.createElement("div");
+    cardEl.className = "card";
+    cardEl.style.backgroundImage = `url(${card})`;
+    dealerCardsContainer.appendChild(cardEl);
   });
 }
 
@@ -67,12 +77,15 @@ function evaluateRound() {
   }
 
   updateStatus();
+
   if (lives === 0) {
     messageEl.textContent = "Game Over! Refresh to play again.";
     drawButton.disabled = true;
   } else if (checkmarks === 3) {
     messageEl.textContent = "You win the game! Refresh to play again.";
     drawButton.disabled = true;
+  } else {
+    drawCards();
   }
 }
 
@@ -91,7 +104,6 @@ drawButton.addEventListener("click", () => {
     drawCards();
   } else {
     evaluateRound();
-    renderCards();
   }
 });
 
