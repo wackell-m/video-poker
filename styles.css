@@ -35,7 +35,9 @@ body {
 .card {
   width: 100px;
   height: 150px;
-  background: gray;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   display: flex;
   align-items: center;
   justify-content: center;
