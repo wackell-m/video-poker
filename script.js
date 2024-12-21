@@ -7,6 +7,18 @@ const cardImages = [
   "img6.jpg"
 ];
 
+const handRanks = [
+  "High Card",
+  "One Pair",
+  "Two Pair",
+  "Three of a Kind",
+  "Straight",
+  "Flush",
+  "Full House",
+  "Four of a Kind",
+  "Straight Flush",
+];
+
 let lives = 5;
 let checkmarks = 0;
 let userCards = [];
@@ -55,6 +67,30 @@ function toggleCard(index) {
   cardEl.classList.toggle("selected");
 }
 
+function evaluateHand(cards) {
+  const cardValues = cards.map((card) => cardImages.indexOf(card)).sort((a, b) => a - b);
+  const uniqueValues = [...new Set(cardValues)];
+
+  if (uniqueValues.length === 5 && cardValues[4] - cardValues[0] === 4) {
+    return 4; // Straight
+  }
+
+  const counts = cardValues.reduce((acc, val) => {
+    acc[val] = (acc[val] || 0) + 1;
+    return acc;
+  }, {});
+
+  const countsArray = Object.values(counts).sort((a, b) => b - a);
+
+  if (countsArray[0] === 4) return 7; // Four of a Kind
+  if (countsArray[0] === 3 && countsArray[1] === 2) return 6; // Full House
+  if (countsArray[0] === 3) return 3; // Three of a Kind
+  if (countsArray[0] === 2 && countsArray[1] === 2) return 2; // Two Pair
+  if (countsArray[0] === 2) return 1; // One Pair
+
+  return 0; // High Card
+}
+
 function evaluateRound() {
   const selectedIndexes = [];
   [...cardsContainer.children].forEach((cardEl, index) => {
@@ -65,15 +101,17 @@ function evaluateRound() {
     userCards[index] = getRandomCard();
   });
 
-  const userRank = calculateRank(userCards);
-  const dealerRank = calculateRank(dealerCards);
+  const userRank = evaluateHand(userCards);
+  const dealerRank = evaluateHand(dealerCards);
 
   if (userRank > dealerRank) {
     checkmarks++;
-    messageEl.textContent = "You win this round!";
-  } else {
+    messageEl.textContent = `You win this round with a ${handRanks[userRank]}!`;
+  } else if (userRank < dealerRank) {
     lives--;
-    messageEl.textContent = "Dealer wins this round!";
+    messageEl.textContent = `Dealer wins this round with a ${handRanks[dealerRank]}!`;
+  } else {
+    messageEl.textContent = "It's a tie!";
   }
 
   updateStatus();
@@ -87,11 +125,6 @@ function evaluateRound() {
   } else {
     drawCards();
   }
-}
-
-function calculateRank(cards) {
-  const cardValues = cards.map((card) => cardImages.indexOf(card));
-  return Math.max(...cardValues);
 }
 
 function updateStatus() {
