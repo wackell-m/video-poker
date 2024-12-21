@@ -45,8 +45,16 @@ body {
   cursor: pointer;
 }
 
+.card.hidden {
+  background-image: url('card-back.jpg');
+}
+
 .card.selected {
   border: 3px solid yellow;
+}
+
+.card.winning-hand {
+  border: 3px solid green;
 }
 
 #draw-button {
