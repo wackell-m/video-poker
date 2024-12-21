@@ -16,13 +16,14 @@ const handRanks = [
   "Flush",
   "Full House",
   "Four of a Kind",
-  "Straight Flush",
+  "Straight Flush"
 ];
 
 let lives = 5;
 let checkmarks = 0;
 let userCards = [];
 let dealerCards = [];
+let dealerExchanges = 0;
 
 const livesEl = document.getElementById("lives");
 const checkmarksEl = document.getElementById("checkmarks");
@@ -34,8 +35,10 @@ const drawButton = document.getElementById("draw-button");
 function drawCards() {
   userCards = Array.from({ length: 5 }, () => getRandomCard());
   dealerCards = Array.from({ length: 5 }, () => getRandomCard());
+  dealerExchanges = 0;
   renderCards();
   messageEl.textContent = "Select cards to replace, then click Draw!";
+  dealerCardsContainer.classList.add("hidden");
 }
 
 function getRandomCard() {
@@ -56,8 +59,7 @@ function renderCards() {
 
   dealerCards.forEach((card) => {
     const cardEl = document.createElement("div");
-    cardEl.className = "card";
-    cardEl.style.backgroundImage = `url(${card})`;
+    cardEl.className = "card hidden";
     dealerCardsContainer.appendChild(cardEl);
   });
 }
@@ -91,6 +93,20 @@ function evaluateHand(cards) {
   return 0; // High Card
 }
 
+function dealerExchange() {
+  const dealerRank = evaluateHand(dealerCards);
+  if (dealerRank < 6 && dealerExchanges < 2) {
+    const indexesToReplace = dealerCards
+      .map((_, index) => index)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 2 - dealerExchanges);
+    indexesToReplace.forEach((index) => {
+      dealerCards[index] = getRandomCard();
+    });
+    dealerExchanges++;
+  }
+}
+
 function evaluateRound() {
   const selectedIndexes = [];
   [...cardsContainer.children].forEach((cardEl, index) => {
@@ -101,15 +117,22 @@ function evaluateRound() {
     userCards[index] = getRandomCard();
   });
 
+  dealerExchange();
+
   const userRank = evaluateHand(userCards);
   const dealerRank = evaluateHand(dealerCards);
 
+  dealerCardsContainer.classList.remove("hidden");
+  renderCards();
+
   if (userRank > dealerRank) {
     checkmarks++;
-    messageEl.textContent = `You win this round with a ${handRanks[userRank]}!`;
+    messageEl.textContent = `You win! Your hand: ${handRanks[userRank]}, Dealer's hand: ${handRanks[dealerRank]}`;
+    highlightWinningHand(cardsContainer);
   } else if (userRank < dealerRank) {
     lives--;
-    messageEl.textContent = `Dealer wins this round with a ${handRanks[dealerRank]}!`;
+    messageEl.textContent = `You lose. Your hand: ${handRanks[userRank]}, Dealer's hand: ${handRanks[dealerRank]}`;
+    highlightWinningHand(dealerCardsContainer);
   } else {
     messageEl.textContent = "It's a tie!";
   }
@@ -120,11 +143,17 @@ function evaluateRound() {
     messageEl.textContent = "Game Over! Refresh to play again.";
     drawButton.disabled = true;
   } else if (checkmarks === 3) {
-    messageEl.textContent = "You win the game! Refresh to play again.";
+    messageEl.textContent = "Congrats, friend. The number you seek is 83.";
     drawButton.disabled = true;
   } else {
     drawCards();
   }
+}
+
+function highlightWinningHand(container) {
+  [...container.children].forEach((cardEl) => {
+    cardEl.classList.add("winning-hand");
+  });
 }
 
 function updateStatus() {
