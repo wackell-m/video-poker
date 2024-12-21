@@ -57,9 +57,10 @@ function renderCards() {
     cardsContainer.appendChild(cardEl);
   });
 
-  dealerCards.forEach((card) => {
+  dealerCards.forEach((card, index) => {
     const cardEl = document.createElement("div");
     cardEl.className = "card hidden";
+    cardEl.style.backgroundImage = `url(${card})`;
     dealerCardsContainer.appendChild(cardEl);
   });
 }
@@ -94,16 +95,14 @@ function evaluateHand(cards) {
 }
 
 function dealerExchange() {
-  const dealerRank = evaluateHand(dealerCards);
-  if (dealerRank < 6 && dealerExchanges < 2) {
-    const indexesToReplace = dealerCards
-      .map((_, index) => index)
+  if (dealerExchanges < 2) {
+    const randomIndexes = [0, 1, 2, 3, 4]
       .sort(() => Math.random() - 0.5)
       .slice(0, 2 - dealerExchanges);
-    indexesToReplace.forEach((index) => {
+    randomIndexes.forEach((index) => {
       dealerCards[index] = getRandomCard();
     });
-    dealerExchanges++;
+    dealerExchanges = 2;
   }
 }
 
@@ -118,23 +117,24 @@ function evaluateRound() {
   });
 
   dealerExchange();
+  dealerCardsContainer.classList.remove("hidden");
 
   const userRank = evaluateHand(userCards);
   const dealerRank = evaluateHand(dealerCards);
 
-  dealerCardsContainer.classList.remove("hidden");
-  renderCards();
+  const userHand = handRanks[userRank];
+  const dealerHand = handRanks[dealerRank];
 
   if (userRank > dealerRank) {
     checkmarks++;
-    messageEl.textContent = `You win! Your hand: ${handRanks[userRank]}, Dealer's hand: ${handRanks[dealerRank]}`;
+    messageEl.textContent = `You win! Your hand: ${userHand}, Dealer's hand: ${dealerHand}`;
     highlightWinningHand(cardsContainer);
   } else if (userRank < dealerRank) {
     lives--;
-    messageEl.textContent = `You lose. Your hand: ${handRanks[userRank]}, Dealer's hand: ${handRanks[dealerRank]}`;
+    messageEl.textContent = `You lose. Your hand: ${userHand}, Dealer's hand: ${dealerHand}`;
     highlightWinningHand(dealerCardsContainer);
   } else {
-    messageEl.textContent = "It's a tie!";
+    messageEl.textContent = `It's a tie! Your hand: ${userHand}, Dealer's hand: ${dealerHand}`;
   }
 
   updateStatus();
@@ -170,3 +170,5 @@ drawButton.addEventListener("click", () => {
 });
 
 drawCards();
+
+  
